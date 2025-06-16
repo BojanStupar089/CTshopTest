@@ -72,7 +72,7 @@ def test_register_successful_on_ctshop(driver):
 
     driver.find_element(By.ID, 'firstname').send_keys('Bojan')
     driver.find_element(By.ID, 'lastname').send_keys('Stupar')
-    driver.find_element(By.ID, 'email').send_keys('bojanstupar089+test7@gmail.com')
+    driver.find_element(By.ID, 'email').send_keys('bojanstupar089+test8@gmail.com')
     driver.find_element(By.ID, 'password').send_keys('Celarevo44!')
     driver.find_element(By.ID, 'registerBtn').click()
 
@@ -366,6 +366,31 @@ def test_ctshop_click_cart_link(driver):
     cart_heading=wait.until(EC.element_to_be_clickable((By.TAG_NAME,"h1"))).text
     assert"Vaša korpa" in cart_heading, "Cart heading was not found on the page."
 
+def test_ctshop_search_gaming_chairs_add_magnum_inferno_to_cart(driver):
+    wait = WebDriverWait(driver, 30)
+
+    search_input=wait.until(EC.visibility_of_element_located((By.NAME,"pretrazi")))
+    search_input.click()
+    search_input.send_keys("Gaming stolice")
+
+    search_button=wait.until(EC.element_to_be_clickable((By.ID,"search-submit-header")))
+    driver.execute_script("arguments[0].click();", search_button)
+
+    product_link = wait.until(EC.element_to_be_clickable((
+        By.XPATH,
+        "//a[@href='https://ctshop.rs/gaming-stolice/magnum-inferno-gejmerska-stolica-crvena.html' and contains(text(), 'Magnum Inferno')]"
+    )))
+
+    # Scrolluj do linka i klikni
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", product_link)
+    driver.execute_script("arguments[0].click();", product_link)
+
+    button_magnum_inferno_to_cart=wait.until(EC.visibility_of_element_located((By.ID,"product-addtocart-button")))
+    driver.execute_script("arguments[0].click();", button_magnum_inferno_to_cart)
+
+    cart_heading = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "modal-title"))).text
+    assert "Proizvod je dodat u korpu" in cart_heading, "Expected cart heading is not good."
+
 def test_ctshop_navigate_laptops_and_tablets_click_gaming_laptops_link(driver):
     wait = WebDriverWait(driver, 30)
 
@@ -534,19 +559,133 @@ def test_ctsop_update_my_accounts(driver):
     button_submit=driver.find_element(By.XPATH,"//button[@type='submit']")
     driver.execute_script("arguments[0].click();", button_submit)
 
+def test_ctshop_click_lenovo_link(driver):
+    wait=WebDriverWait(driver, 30)
+
+    lenovo_link=wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "img[alt='Lenovo - CT shop']")))
+    driver.execute_script("arguments[0].scrollIntoView()", lenovo_link)
+    driver.execute_script("arguments[0].click();", lenovo_link)
+
+    breadcrumb_items = driver.find_elements(By.CSS_SELECTOR, "ol.sharkskin-breadcrumb li")
+    breadcrumb_text = " / ".join([item.text.strip() for item in breadcrumb_items])
+    assert breadcrumb_text == "CT Shop / Lenovo", f"Expected 'CT Shop / Lenovo', but got '{breadcrumb_text}'"
+
+def test_ctshop_click_samsung_link(driver):
+    wait = WebDriverWait(driver, 30)
+
+    samsung_link = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "img[alt='Samsung - CT SHOP']")))
+    driver.execute_script("arguments[0].scrollIntoView()", samsung_link)
+    driver.execute_script("arguments[0].click();", samsung_link)
+
+    breadcrumb_items = driver.find_elements(By.CSS_SELECTOR, "ol.sharkskin-breadcrumb li")
+    breadcrumb_text = " / ".join([item.text.strip() for item in breadcrumb_items])
+    assert breadcrumb_text == "CT Shop / Samsung", f"Expected 'CT Shop / Samsung', but got '{breadcrumb_text}'"
+
+def test_ctshop_click_facebook_link(driver):
+    wait = WebDriverWait(driver, 30)
+
+    facebook_link=wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "img[alt='CT Shop Facebook']")))
+    driver.execute_script("arguments[0].scrollIntoView()", facebook_link)
+    driver.execute_script("arguments[0].click();", facebook_link)
+
+def test_ctshop_click_instagram_link(driver):
+    wait = WebDriverWait(driver, 30)
+
+    instagram_link = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "img[alt='CT Shop Instagram']")))
+    driver.execute_script("arguments[0].scrollIntoView()", instagram_link)
+    driver.execute_script("arguments[0].click();", instagram_link)
+
+def test_ctshop_click_shopes_link(driver):
+    wait = WebDriverWait(driver, 30)
+
+    stores_link=wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Prodavnice")))
+    driver.execute_script("arguments[0].scrollIntoView()", stores_link)
+    driver.execute_script("arguments[0].click();", stores_link)
+
+    stores_heading=wait.until(EC.visibility_of_element_located((By.TAG_NAME, "h1"))).text
+    assert "Prodavnice" in stores_heading,"Expected cart heading is not good."
 
 
+def test_ctshop_click_hiring_link(driver):
+    wait = WebDriverWait(driver, 30)
 
+    stores_link = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Zaposlenje")))
+    driver.execute_script("arguments[0].scrollIntoView()", stores_link)
+    driver.execute_script("arguments[0].click();", stores_link)
 
+    first_img = wait.until(
+        EC.visibility_of_element_located((By.CSS_SELECTOR, "div.col-md-12.home-block.page-promo img"))
+    )
 
+    assert first_img.get_attribute("alt") == "Posao - CT Shop - Beograd - 0", \
+        f"Unexpected alt text: {first_img.get_attribute('alt')}"
 
+def test_ctshop_click_map_sites(driver):
+    wait = WebDriverWait(driver, 30)
 
+    map_sites_click=wait.until(EC.visibility_of_element_located((By.LINK_TEXT,"Mapa sajta")))
+    driver.execute_script("arguments[0].scrollIntoView()", map_sites_click)
+    driver.execute_script("arguments[0].click();", map_sites_click)
 
+    map_sites_heading=wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "category-title"))).text
+    assert "Laptopovi-Tableti" in map_sites_heading, "Expected cart heading is not good."
 
+def test_ctshop_click_terms_link(driver):
+    wait = WebDriverWait(driver, 30)
 
+    terms_link = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Opšti uslovi")))
+    driver.execute_script("arguments[0].scrollIntoView()", terms_link)
+    driver.execute_script("arguments[0].click();", terms_link)
 
+    terms_heading = wait.until(EC.visibility_of_element_located((By.TAG_NAME, "h4"))).text
+    assert "OPŠTI USLOVI" in terms_heading, "Expected cart heading is not good."
 
+def test_ctshop_click_contact_link(driver):
+    wait = WebDriverWait(driver, 30)
 
+    contact_link = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Kontakt")))
+    driver.execute_script("arguments[0].scrollIntoView()", contact_link)
+    driver.execute_script("arguments[0].click();", contact_link)
+
+    kontakt_element = driver.find_element(By.XPATH, "//strong[normalize-space()='Kontakt']")
+    assert kontakt_element.is_displayed(), "The 'Kontakt' title is not visible"
+
+def test_ctshop_click_payment_methods_link(driver):
+    wait = WebDriverWait(driver, 30)
+
+    payment_link = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Načini plaćanja")))
+    driver.execute_script("arguments[0].scrollIntoView()", payment_link)
+    driver.execute_script("arguments[0].click();", payment_link)
+
+    payment_heading = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2/strong[normalize-space()='Načini plaćanja']"))).text
+    assert "Načini plaćanja" in payment_heading, "Expected cart heading is not good."
+
+def test_ctshop_click_blog_link(driver):
+    wait = WebDriverWait(driver, 30)
+
+    blog_link = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Blog")))
+    driver.execute_script("arguments[0].scrollIntoView()", blog_link)
+    driver.execute_script("arguments[0].click();", blog_link)
+
+    terms_heading = wait.until(EC.visibility_of_element_located(
+        (By.XPATH, "//div[@id='minimizeOverviewTextHeight']//h2")
+    )).text
+
+    assert "Dobrodošli na CT shop blog" in terms_heading, "Expected blog heading is not present."
+
+def test_ctshop_click_catalogy_link(driver):
+    wait = WebDriverWait(driver, 30)
+
+    catalogy_link = wait.until(EC.visibility_of_element_located((By.LINK_TEXT, "Katalozi")))
+    driver.execute_script("arguments[0].scrollIntoView()", catalogy_link)
+    driver.execute_script("arguments[0].click();", catalogy_link)
+
+    katalog_link = WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.XPATH, "//ol[@class='sharkskin-breadcrumb']//a[text()='Katalog']"))
+    )
+
+    # Assert it's visible
+    assert katalog_link.is_displayed(), "'Katalog' breadcrumb is not visible"
 
 def test_ctshop_logout(driver):
     login(driver)
